@@ -33,6 +33,7 @@ func New(config hermesconfig.Config) (*Service, error) {
 
 func (service *Service) Execute(operationName string) error {
 	operation := service.hermes.Operations[operationName]
+	anyFailure := false
 
 	for _, taskName := range operation.Tasks {
 		service.logger.Log(fmt.Sprintf("TASK: %s", taskName))
@@ -44,29 +45,37 @@ func (service *Service) Execute(operationName string) error {
 			hostWaitGroup.Add(1)
 			go func(host hermesconfig.Host) {
 				defer hostWaitGroup.Done()
-				service.runTask(host, task)
+				if !service.runTask(host, task) {
+					anyFailure = true
+				}
 			}(host)
 		}
 		hostWaitGroup.Wait()
 	}
 
+	if anyFailure {
+		return errors.New("was not completely  successful")
+	}
+
 	return nil
 }
 
-func (service *Service) runTask(host hermesconfig.Host, task hermesconfig.Task) {
+func (service *Service) runTask(host hermesconfig.Host, task hermesconfig.Task) bool {
 	if task.If != "" {
 		if err := service.shellExec(host, task, task.If); err != nil {
 			service.logger.Info(fmt.Sprintf("SKIPPED: %s", host.Hostname))
-			return
+			return true
 		}
 	}
 
 	if err := service.shellExec(host, task, strings.Join(task.Commands, " && ")); err != nil {
 		service.logger.Error(fmt.Sprintf("ERROR: %s %s", host.Hostname, err.Error()))
-		return
+		return false
 	}
 
 	service.logger.Success(fmt.Sprintf("SUCCESS: %s", host.Hostname))
+
+	return true
 }
 
 func (service *Service) shellExec(host hermesconfig.Host, task hermesconfig.Task, command string) error {
