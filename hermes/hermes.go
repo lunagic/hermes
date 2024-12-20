@@ -54,7 +54,7 @@ func (service *Service) Execute(operationName string) error {
 	}
 
 	if anyFailure {
-		return errors.New("was not completely  successful")
+		return errors.New("was not completely successful")
 	}
 
 	return nil
