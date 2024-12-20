@@ -54,8 +54,9 @@ func Cmd() *cobra.Command {
 
 	for operationName, operation := range config.Operations {
 		run.AddCommand(&cobra.Command{
-			Use:   operationName,
-			Short: operation.Description,
+			Use:          operationName,
+			Short:        operation.Description,
+			SilenceUsage: true,
 			RunE: func(cmd *cobra.Command, args []string) error {
 				h, err := hermes.New(config)
 				if err != nil {
