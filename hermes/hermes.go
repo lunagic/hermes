@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -69,7 +70,7 @@ func (service *Service) runTask(host hermesconfig.Host, task hermesconfig.Task) 
 	}
 
 	if err := service.shellExec(host, task, strings.Join(task.Commands, " && ")); err != nil {
-		service.logger.Error(fmt.Sprintf("ERROR: %s %s", host.Hostname, err.Error()))
+		service.logger.Error(fmt.Sprintf("ERROR: %s\n%s", host.Hostname, err.Error()))
 		return false
 	}
 
@@ -79,15 +80,29 @@ func (service *Service) runTask(host hermesconfig.Host, task hermesconfig.Task) 
 }
 
 func (service *Service) shellExec(host hermesconfig.Host, task hermesconfig.Task, command string) error {
+	if err := os.MkdirAll("logs", 0755); err != nil {
+		return err
+	}
+
+	logFile, err := os.OpenFile(fmt.Sprintf("logs/%s.log", host.Hostname), os.O_CREATE|os.O_APPEND|os.O_RDWR, 0655)
+	if err != nil {
+		return err
+	}
+	defer logFile.Close()
+
+	errorBuffer := bytes.NewBuffer([]byte{})
+	stdErr := io.MultiWriter(errorBuffer, logFile)
+
 	destination := host.Hostname
 	if task.User != "" {
 		destination = task.User + "@" + host.Hostname
 	}
 
-	errorBuffer := bytes.NewBuffer([]byte{})
+	logFile.Write([]byte(fmt.Sprintf("$ %s\n", command)))
 
 	cmd := exec.Command("ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=5", destination, command)
-	cmd.Stderr = errorBuffer
+	cmd.Stdout = logFile
+	cmd.Stderr = stdErr
 
 	if err := cmd.Run(); err != nil {
 		return errors.New(errorBuffer.String())
