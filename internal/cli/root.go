@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/aaronellington/hermes/hermes"
-	"github.com/aaronellington/hermes/hermes/hermesconfig"
+	"github.com/lunagic/hermes/hermes"
+	"github.com/lunagic/hermes/hermes/hermesconfig"
 	"github.com/lunagic/environment-go/environment"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"

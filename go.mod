@@ -1,4 +1,4 @@
-module github.com/aaronellington/hermes
+module github.com/lunagic/hermes
 
 go 1.23.1
 

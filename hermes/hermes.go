@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aaronellington/hermes/hermes/hermesconfig"
+	"github.com/lunagic/hermes/hermes/hermesconfig"
 )
 
 type Service struct {

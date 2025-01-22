@@ -5,7 +5,7 @@ Shell Command Delivery Tool
 ## Installation
 
 ```shell
-go install github.com/aaronellington/hermes@latest
+go install github.com/lunagic/hermes@latest
 ```
 
 ## Command Line Usage

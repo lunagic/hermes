@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"github.com/aaronellington/hermes/internal/cli"
+	"github.com/lunagic/hermes/internal/cli"
 )
 
 func main() {
