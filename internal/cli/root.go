@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/lunagic/environment-go/environment"
 	"github.com/lunagic/hermes/hermes"
 	"github.com/lunagic/hermes/hermes/hermesconfig"
-	"github.com/lunagic/environment-go/environment"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -57,13 +57,13 @@ func Cmd() *cobra.Command {
 			Use:          operationName,
 			Short:        operation.Description,
 			SilenceUsage: true,
-			RunE: func(cmd *cobra.Command, args []string) error {
+			Run: func(cmd *cobra.Command, args []string) {
 				h, err := hermes.New(config)
 				if err != nil {
 					log.Fatal(err)
 				}
 
-				return h.Execute(operationName)
+				h.Execute(operationName)
 			},
 		})
 	}

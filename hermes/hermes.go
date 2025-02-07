@@ -70,7 +70,13 @@ func (service *Service) runTask(host hermesconfig.Host, task hermesconfig.Task) 
 	}
 
 	if err := service.shellExec(host, task, strings.Join(task.Commands, " && ")); err != nil {
-		service.logger.Error(fmt.Sprintf("ERROR: %s\n%s", host.Hostname, err.Error()))
+		errorString := strings.TrimSpace(err.Error())
+		if strings.Contains(errorString, "\n") {
+			errorString = "\n" + errorString
+		} else if errorString != "" {
+			errorString = " - " + errorString
+		}
+		service.logger.Error(fmt.Sprintf("ERROR: %s%s", host.Hostname, errorString))
 		return false
 	}
 
