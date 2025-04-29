@@ -63,7 +63,7 @@ func Cmd() *cobra.Command {
 					log.Fatal(err)
 				}
 
-				h.Execute(operationName)
+				_ = h.Execute(operationName)
 			},
 		})
 	}
