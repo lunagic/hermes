@@ -2,6 +2,10 @@
 
 Shell Command Delivery Tool
 
+[![Validate](https://github.com/lunagic/hermes/actions/workflows/validate.yml/badge.svg)](https://github.com/lunagic/hermes/actions/workflows/validate.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/lunagic/hermes.svg)](https://pkg.go.dev/github.com/lunagic/hermes)
+[![Go Report Card](https://goreportcard.com/badge/github.com/lunagic/hermes)](https://goreportcard.com/report/github.com/lunagic/hermes)
+
 ## Installation
 
 ```shell
