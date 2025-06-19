@@ -99,7 +99,8 @@ func (service *Service) shellExec(host hermesconfig.Host, task hermesconfig.Task
 	}()
 
 	errorBuffer := bytes.NewBuffer([]byte{})
-	stdErr := io.MultiWriter(errorBuffer, logFile)
+
+	multiWriter := io.MultiWriter(errorBuffer, logFile)
 
 	destination := host.Hostname
 	if task.User != "" {
@@ -109,8 +110,8 @@ func (service *Service) shellExec(host hermesconfig.Host, task hermesconfig.Task
 	_, _ = logFile.Write(fmt.Appendf(nil, "$ %s\n", command))
 
 	cmd := exec.Command("ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=5", destination, command)
-	cmd.Stdout = logFile
-	cmd.Stderr = stdErr
+	cmd.Stdout = multiWriter
+	cmd.Stderr = multiWriter
 
 	if err := cmd.Run(); err != nil {
 		return errors.New(errorBuffer.String())
